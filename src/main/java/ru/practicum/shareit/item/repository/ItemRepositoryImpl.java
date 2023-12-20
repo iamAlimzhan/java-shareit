@@ -58,14 +58,17 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> getItemByText(String text) {
         List<Item> list = new ArrayList<>();
+        final String lowercaseText = text.toLowerCase();
         for (Item item : items.values()) {
             if (item.isAvailable()) {
-                if (item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                        item.getDescription().toLowerCase().contains(text.toLowerCase())) {
+                if (item.getName().toLowerCase().contains(lowercaseText) ||
+                        item.getDescription().toLowerCase().contains(lowercaseText)) {
                     list.add(item);
                 }
             }
         }
+
         return list;
     }
+
 }

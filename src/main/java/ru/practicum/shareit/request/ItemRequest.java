@@ -6,9 +6,6 @@ import org.apache.catalina.User;
 
 import java.util.Date;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
 @Builder
 public class ItemRequest {

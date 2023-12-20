@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(long userId, UserDto userDto) {
         User user = validationUpdate(userId, userDto);
-        return UserMapper.toUserDto(userRepository.updateUser(userId, user));
+        return UserMapper.toUserDto(user);
     }
 
     @Override

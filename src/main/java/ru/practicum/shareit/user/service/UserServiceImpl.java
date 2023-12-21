@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        validationAdd(userDto);
         if (userRepository.isEmailExistInRepository(UserMapper.toUser(userDto))) {
             throw new EmailException(userDto.getEmail());
         }
@@ -46,15 +45,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(long userId) {
         return userRepository.deleteUser(userId);
-    }
-
-    private void validationAdd(UserDto userDto) {
-        if (userDto.getEmail() == null) {
-            throw new ValidationException("Email не может быть пустым");
-        }
-        if (userDto.getName() == null) {
-            throw new ValidationException("Имя пользователя не может быть пустым");
-        }
     }
 
     private User validationUpdate(long userId, UserDto userDto) {

@@ -29,9 +29,7 @@ public class ErrorHandler {
         log.debug("Обработка EmailException со статусом 409 Conflict: {}", ex.getMessage(), ex);
         return new ErrorResponse(String.format("Пользователь уже существует с email \"%s\"", ex.getParam()));
     }
-
-    /*не совсем понял для чего использовать Throwable и получается следует наследовать Throwable в других
-    исключениях?*/
+    
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final RuntimeException ex) {

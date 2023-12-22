@@ -23,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
-        validationAdd(userId, itemDto);
+        userRepository.getUserById(userId);
         return ItemMapper.toItemDto(itemRepository.addItem(userId, ItemMapper.toItem(itemDto)));
     }
 
@@ -77,16 +77,5 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemDto.getAvailable());
         }
         return item;
-    }
-
-    private void validationAdd(long userId, ItemDto itemDto) {
-        userRepository.getUserById(userId);
-        if (itemDto.getName().isEmpty()) {
-            throw new ValidationException(("Имя вещи не может быть пустым"));
-        } else if (itemDto.getDescription() == null) {
-            throw new ValidationException("Описание вещи не может быть пустым");
-        } else if (itemDto.getAvailable() == null) {
-            throw new ValidationException("Необходимо указать, доступна ли вещь");
-        }
     }
 }

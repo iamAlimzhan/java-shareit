@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.validation.Validation;
 import ru.practicum.shareit.exceptions.EmailException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -13,42 +15,43 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final Validation validation;
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        if (userRepository.isEmailExistInRepository(UserMapper.toUser(userDto))) {
-            throw new EmailException(userDto.getEmail());
-        }
-        return UserMapper.toUserDto(userRepository.addUser(UserMapper.toUser(userDto)));
+        log.debug("Создание пользователя \"{}\"", userDto.getName());
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
     }
 
     @Override
     public UserDto updateUser(long userId, UserDto userDto) {
         User user = validationUpdate(userId, userDto);
-        return UserMapper.toUserDto(user);
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto getUserById(long userId) {
-        return UserMapper.toUserDto(userRepository.getUserById(userId));
+        User user = validation.checkUser(userId);
+        return UserMapper.toUserDto(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream().map(UserMapper::toUserDto)
+        return userRepository.findAll().stream().map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public boolean deleteUser(long userId) {
-        return userRepository.deleteUser(userId);
+    public void deleteUser(long userId) {
+        userRepository.deleteById(userId);
     }
 
     private User validationUpdate(long userId, UserDto userDto) {
-        User user = userRepository.getUserById(userId);
+        User user = validation.checkUser(userId);
         if (userDto.getName() != null) {
             if (userDto.getName().isBlank()) {
                 throw new ValidationException("Имя пользователя не может быть пустым");
@@ -59,12 +62,23 @@ public class UserServiceImpl implements UserService {
             if (userDto.getEmail().isBlank()) {
                 throw new EmailException("Email не может быть пустым");
             }
-            if (!user.getEmail().equals(userDto.getEmail()) && userRepository.isEmailExistInRepository(UserMapper
+            if (!user.getEmail().equals(userDto.getEmail()) && isEmailPresentInRepository(UserMapper
                     .toUser(userDto))) {
                 throw new EmailException(String.format("%s уже существует в базе", userDto.getEmail()));
             }
             user.setEmail(userDto.getEmail());
         }
         return user;
+    }
+
+    private boolean isEmailPresentInRepository(User user) {
+        boolean isPresent = false;
+        for (User otherUser : userRepository.findAll()) {
+            if (otherUser.getEmail().equals(user.getEmail())) {
+                isPresent = true;
+                break;
+            }
+        }
+        return isPresent;
     }
 }

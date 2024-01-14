@@ -1,31 +1,29 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "items", schema = "public")
+@Table(name = "requests", schema = "public")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
-public class Item {
+public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private String description;
-    private Boolean available;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private User owner;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
+    @JoinColumn(name = "requester_id")
+    private User requestor;
+    private Date created;
 }

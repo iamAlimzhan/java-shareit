@@ -39,4 +39,10 @@ public class ErrorHandler {
         log.error("Обработка Throwable со статусом 500 Internal Server Error: {}", ex.getMessage(), ex);
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalStatusException(final IllegalStatusException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }

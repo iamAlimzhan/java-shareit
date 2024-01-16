@@ -68,6 +68,7 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+    //не совсем разобрался как разбить бронирования и комментарии на мапы и как испозльзовать их
     public List<ItemDto> getItemsByUserId(long userId) {
         validation.checkUser(userId);
         List<Item> items = itemRepository.findByOwnerId(userId);
@@ -116,12 +117,12 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = commentRepository.save(CommentMapper.toComment(commentDto, author, item));
         return CommentMapper.toCommentDto(comment);
     }
-
+//не понял что и как исправить)
     private void checkAuthor(long userId, long itemId) {
         Booking booking = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(itemId,
                 userId, LocalDateTime.now(), BookingStatus.APPROVED);
         if (booking == null) {
-            throw new ValidationException("Пользлватель не мджет оставить комментарий");
+            throw new ValidationException("Пользователь не может оставить комментарий");
         }
     }
 
@@ -130,17 +131,17 @@ public class ItemServiceImpl implements ItemService {
         Item item = validation.checkItem(itemId);
         User owner = item.getOwner();
         if (owner.getId() != userId) {
-            throw new NotFoundException("Пользователь не является собственником вещи и не имеет прав на её изменение.");
+            throw new NotFoundException("Пользователь не является собственником вещи и не имеет прав на её изменение");
         }
         if (itemDto.getName() != null) {
             if (itemDto.getName().isBlank()) {
-                throw new ValidationException("Имя вещи не должно быть пустым.");
+                throw new ValidationException("Имя вещи не должно быть пустым");
             }
             item.setName(itemDto.getName());
         }
         if (itemDto.getDescription() != null) {
             if (itemDto.getDescription().isBlank()) {
-                throw new ValidationException("Описание вещи не должно быть пустым.");
+                throw new ValidationException("Описание вещи не должно быть пустым");
             }
             item.setDescription(itemDto.getDescription());
         }

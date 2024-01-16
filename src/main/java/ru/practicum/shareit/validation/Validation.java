@@ -17,6 +17,8 @@ public class Validation {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    //Эти проверки можно было бы реализовать в default методах интерфейсов где они используется, или следует
+    //завсети отдельный интерфейс
     public Item checkItem(long itemId) {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
 

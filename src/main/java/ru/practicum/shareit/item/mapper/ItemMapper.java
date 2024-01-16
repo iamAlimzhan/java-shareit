@@ -20,7 +20,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item toItem(ItemDto itemDto) {
+    public Item toItem(ItemDto itemDto) {
         Item item = Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -35,7 +35,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static ItemDto toItemDtoForOwner(Item item) {
+    public ItemDto toItemDtoForOwner(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())

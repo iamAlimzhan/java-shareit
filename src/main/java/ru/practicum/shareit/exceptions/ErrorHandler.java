@@ -40,9 +40,10 @@ public class ErrorHandler {
         return new ErrorResponse(ex.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({IllegalStatusException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIllegalStatusException(final IllegalStatusException e) {
-        return new ErrorResponse(e.getMessage());
+    public ErrorResponse handleIllegalStatusException(final Exception ex) {
+        log.debug("Обработка IllegalStatusException со статусом 400 Bad Request: {}", ex.getMessage(), ex);
+        return new ErrorResponse(ex.getMessage());
     }
 }

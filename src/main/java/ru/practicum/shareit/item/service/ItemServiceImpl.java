@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.validation.Validation;
 import ru.practicum.shareit.booking.dto.BookingDtoOwner;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -20,6 +19,7 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.validation.Validation;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -117,7 +117,8 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = commentRepository.save(CommentMapper.toComment(commentDto, author, item));
         return CommentMapper.toCommentDto(comment);
     }
-//не понял что и как исправить)
+
+    //не понял что и как исправить)
     private void checkAuthor(long userId, long itemId) {
         Booking booking = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(itemId,
                 userId, LocalDateTime.now(), BookingStatus.APPROVED);

@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.validation.Validation;
 import ru.practicum.shareit.exceptions.EmailException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final Validation validation;
 
     @Override
     public UserDto addUser(UserDto userDto) {
@@ -35,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(long userId) {
-        User user = validation.checkUser(userId);
+        User user = userRepository.checkUser(userId);
         return UserMapper.toUserDto(user);
     }
 
@@ -51,7 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private User validationUpdate(long userId, UserDto userDto) {
-        User user = validation.checkUser(userId);
+        User user = userRepository.checkUser(userId);
         if (userDto.getName() != null) {
             if (userDto.getName().isBlank()) {
                 throw new ValidationException("Имя пользователя не может быть пустым");

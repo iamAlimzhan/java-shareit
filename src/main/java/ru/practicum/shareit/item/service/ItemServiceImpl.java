@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoOwner;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -19,28 +20,29 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.validation.Validation;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
     private final BookingService bookingService;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final Validation validation;
 
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
-        User owner = validation.checkUser(userId);
+        User owner = userRepository.checkUser(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
         Item itemAfterSave = itemRepository.save(item);
@@ -55,7 +57,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(long userId, long itemId) {
-        Item item = validation.checkItem(itemId);
+        Item item = itemRepository.checkItem(itemId);
         ItemDto itemDto = ItemMapper.toItemDtoForOwner(item);
         if (userId == (item.getOwner().getId())) {
             itemDto.setLastBooking(bookingService.getLastBooking(itemId));
@@ -64,22 +66,25 @@ public class ItemServiceImpl implements ItemService {
             itemDto = ItemMapper.toItemDto(item);
         }
         itemDto.setComments(commentRepository.findAllByItemId(itemId).stream()
-                .map(CommentMapper::toCommentDto).collect(Collectors.toList()));
+                .map(CommentMapper::toCommentDto).collect(toList()));
         return itemDto;
     }
 
     //не совсем разобрался как разбить бронирования и комментарии на мапы и как испозльзовать их
     public List<ItemDto> getItemsByUserId(long userId) {
-        validation.checkUser(userId);
+        userRepository.checkUser(userId);
         List<Item> items = itemRepository.findByOwnerId(userId);
         List<ItemDto> itemsDto = items.stream()
-                .map(ItemMapper::toItemDtoForOwner).collect(Collectors.toList());
-        List<Booking> bookings = bookingRepository.findAllByItemIn(items);
-        List<Comment> comments = commentRepository.findAllByItemIn(items);
+                .map(ItemMapper::toItemDtoForOwner).collect(toList());
+        //List<Booking> bookings = bookingRepository.findAllByItemIn(items);
+        Map<Item, List<Booking>> bookings = bookingRepository.findAllByItemIn(items, Sort.by(DESC, "created"))
+        Map<Item, List<Comment>> comments = commentRepository.findAllByItemIn(items, Sort.by(DESC, "created"))
+                .stream()
+                .collect(groupingBy(Comment::getItem, toList()));
         for (ItemDto item : itemsDto) {
-            List<Booking> bookingByItem = bookings.stream()
+            List<Booking> bookingByItem = bookings.values().stream()
                     .filter(booking -> Objects.equals(booking.getItem().getId(), item.getId()))
-                    .collect(Collectors.toList());
+                    .collect(toList());
             item.setLastBooking(bookingByItem.stream()
                     .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
                     .filter(booking -> Objects.equals(booking.getStatus(), BookingStatus.APPROVED))
@@ -92,10 +97,10 @@ public class ItemServiceImpl implements ItemService {
                     .map(BookingMapper::toBookingDtoForOwner)
                     .min(Comparator.comparing(BookingDtoOwner::getStart))
                     .orElse(null));
-            item.setComments(comments.stream()
+            item.setComments(comments.values().stream()
                     .filter(comment -> Objects.equals(comment.getItem().getId(), item.getId()))
                     .map(CommentMapper::toCommentDto)
-                    .collect(Collectors.toList()));
+                    .collect(toList()));
         }
         return itemsDto;
     }
@@ -106,30 +111,29 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
         List<Item> items = itemRepository.getItemByText(text.toLowerCase());
-        return items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        return items.stream().map(ItemMapper::toItemDto).collect(toList());
     }
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-        User author = validation.checkUser(userId);
-        Item item = validation.checkItem(itemId);
+        User author = userRepository.checkUser(userId);
+        Item item = itemRepository.checkItem(itemId);
         checkAuthor(userId, itemId);
         Comment comment = commentRepository.save(CommentMapper.toComment(commentDto, author, item));
         return CommentMapper.toCommentDto(comment);
     }
 
-    //не понял что и как исправить)
     private void checkAuthor(long userId, long itemId) {
-        Booking booking = bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(itemId,
+        boolean booking = bookingRepository.existsByItemIdAndBookerIdAndEndIsBeforeAndStatus(itemId,
                 userId, LocalDateTime.now(), BookingStatus.APPROVED);
-        if (booking == null) {
+        if (booking == false) {
             throw new ValidationException("Пользователь не может оставить комментарий");
         }
     }
 
     private Item validationUpdate(long userId, long itemId, ItemDto itemDto) {
-        validation.checkUser(userId);
-        Item item = validation.checkItem(itemId);
+        userRepository.checkUser(userId);
+        Item item = itemRepository.checkItem(itemId);
         User owner = item.getOwner();
         if (owner.getId() != userId) {
             throw new NotFoundException("Пользователь не является собственником вещи и не имеет прав на её изменение");

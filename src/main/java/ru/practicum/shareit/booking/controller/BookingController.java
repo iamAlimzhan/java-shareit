@@ -18,13 +18,13 @@ public class BookingController {
 
     @PostMapping
     public BookingDto addBooking(@RequestHeader(HeaderConstants.X_SHARER_USER_ID) long userId,
-                          @Valid @RequestBody InputBookingDto bookingDto) {
+                                 @Valid @RequestBody InputBookingDto bookingDto) {
         return bookingService.addBooking(userId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDto updateBooking(@RequestHeader(HeaderConstants.X_SHARER_USER_ID) long userId,
-                             @PathVariable long bookingId, @RequestParam boolean approved) {
+                                    @PathVariable long bookingId, @RequestParam boolean approved) {
         return bookingService.updateBooking(userId, bookingId, approved);
     }
 

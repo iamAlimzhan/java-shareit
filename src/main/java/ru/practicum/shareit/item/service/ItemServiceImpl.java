@@ -23,12 +23,11 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 @RequiredArgsConstructor
@@ -66,44 +65,50 @@ public class ItemServiceImpl implements ItemService {
             itemDto = ItemMapper.toItemDto(item);
         }
         itemDto.setComments(commentRepository.findAllByItemId(itemId).stream()
-                .map(CommentMapper::toCommentDto).collect(toList()));
+                .map(CommentMapper::toCommentDto).collect(Collectors.toList()));
         return itemDto;
     }
 
-    //не совсем разобрался как разбить бронирования и комментарии на мапы и как испозльзовать их
     public List<ItemDto> getItemsByUserId(long userId) {
         userRepository.checkUser(userId);
         List<Item> items = itemRepository.findByOwnerId(userId);
-        List<ItemDto> itemsDto = items.stream()
-                .map(ItemMapper::toItemDtoForOwner).collect(toList());
-        //List<Booking> bookings = bookingRepository.findAllByItemIn(items);
-        Map<Item, List<Booking>> bookings = bookingRepository.findAllByItemIn(items, Sort.by(DESC, "created"))
-        Map<Item, List<Comment>> comments = commentRepository.findAllByItemIn(items, Sort.by(DESC, "created"))
+
+        Map<Item, List<Comment>> commentsMap = commentRepository.findAllByItemIn(items, Sort.by(Sort.Order.desc("created")))
                 .stream()
-                .collect(groupingBy(Comment::getItem, toList()));
-        for (ItemDto item : itemsDto) {
-            List<Booking> bookingByItem = bookings.values().stream()
-                    .filter(booking -> Objects.equals(booking.getItem().getId(), item.getId()))
-                    .collect(toList());
-            item.setLastBooking(bookingByItem.stream()
-                    .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
-                    .filter(booking -> Objects.equals(booking.getStatus(), BookingStatus.APPROVED))
-                    .map(BookingMapper::toBookingDtoForOwner)
-                    .max(Comparator.comparing(BookingDtoOwner::getEnd))
-                    .orElse(null));
-            item.setNextBooking(bookingByItem.stream()
-                    .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                    .filter(booking -> Objects.equals(booking.getStatus(), BookingStatus.APPROVED))
-                    .map(BookingMapper::toBookingDtoForOwner)
-                    .min(Comparator.comparing(BookingDtoOwner::getStart))
-                    .orElse(null));
-            item.setComments(comments.values().stream()
-                    .filter(comment -> Objects.equals(comment.getItem().getId(), item.getId()))
-                    .map(CommentMapper::toCommentDto)
-                    .collect(toList()));
-        }
+                .collect(Collectors.groupingBy(Comment::getItem, Collectors.toList()));
+
+        Map<Item, List<Booking>> bookingsMap = bookingRepository.findAllByItemInAndStatus(items, BookingStatus.APPROVED)
+                .stream()
+                .collect(Collectors.groupingBy(Booking::getItem, Collectors.toList()));
+
+        List<ItemDto> itemsDto = items.stream()
+                .map(item -> {
+                    ItemDto itemDto = ItemMapper.toItemDtoForOwner(item);
+
+                    List<Booking> bookingByItem = bookingsMap.getOrDefault(item, Collections.emptyList());
+                    itemDto.setLastBooking(bookingByItem.stream()
+                            .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
+                            .map(BookingMapper::toBookingDtoForOwner)
+                            .max(Comparator.comparing(BookingDtoOwner::getEnd))
+                            .orElse(null));
+                    itemDto.setNextBooking(bookingByItem.stream()
+                            .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
+                            .map(BookingMapper::toBookingDtoForOwner)
+                            .min(Comparator.comparing(BookingDtoOwner::getStart))
+                            .orElse(null));
+
+                    itemDto.setComments(commentsMap.getOrDefault(item, Collections.emptyList())
+                            .stream()
+                            .map(CommentMapper::toCommentDto)
+                            .collect(Collectors.toList()));
+
+                    return itemDto;
+                })
+                .collect(Collectors.toList());
+
         return itemsDto;
     }
+
 
     @Override
     public List<ItemDto> getItemsByText(String text) {
@@ -111,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
         List<Item> items = itemRepository.getItemByText(text.toLowerCase());
-        return items.stream().map(ItemMapper::toItemDto).collect(toList());
+        return items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override

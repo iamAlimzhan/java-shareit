@@ -15,7 +15,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "i.available=true")
     List<Item> getItemByText(String text);
 
-    public default Item checkItem(long itemId) {
+    default Item checkItem(long itemId) {
         Optional<Item> optionalItem = findById(itemId);
 
         if (optionalItem.isPresent()) {

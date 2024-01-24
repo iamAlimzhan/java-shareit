@@ -6,7 +6,6 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByOwnerId(long userId);
@@ -16,12 +15,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> getItemByText(String text);
 
     default Item checkItem(long itemId) {
-        Optional<Item> optionalItem = findById(itemId);
-
-        if (optionalItem.isPresent()) {
-            return optionalItem.get();
-        } else {
-            throw new NotFoundException(String.format("Предмета с id = %s нет в базе", itemId));
-        }
+        return findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмета с id = %s нет в базе",
+                itemId)));
     }
 }

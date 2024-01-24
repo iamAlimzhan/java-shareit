@@ -70,13 +70,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isEmailPresentInRepository(User user) {
-        boolean isPresent = false;
-        for (User otherUser : userRepository.findAll()) {
-            if (otherUser.getEmail().equals(user.getEmail())) {
-                isPresent = true;
-                break;
-            }
-        }
-        return isPresent;
+        return userRepository.existsByEmail(user.getEmail());
     }
 }

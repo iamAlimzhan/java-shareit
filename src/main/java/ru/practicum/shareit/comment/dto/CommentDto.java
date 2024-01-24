@@ -3,7 +3,6 @@ package ru.practicum.shareit.comment.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentDto {
     private Long id;
-    @NotBlank
     @Size(max = 1024)
     private String text;
     private String authorName;

@@ -9,12 +9,14 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.status.BookingStatus;
+import ru.practicum.shareit.comment.dto.CommentCreateRequestDto;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.mapper.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.item.dto.ItemCreateRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -40,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public ItemDto addItem(long userId, ItemDto itemDto) {
+    public ItemDto addItem(long userId, ItemCreateRequestDto itemDto) {
         User owner = userRepository.checkUser(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
@@ -49,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
+    public ItemDto updateItem(long userId, long itemId, ItemCreateRequestDto itemDto) {
         Item item = validationUpdate(userId, itemId, itemDto);
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
@@ -120,12 +122,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
+    public CommentDto addComment(long userId, long itemId, CommentCreateRequestDto commentDto) {
         User author = userRepository.checkUser(userId);
         Item item = itemRepository.checkItem(itemId);
         checkAuthor(userId, itemId);
-        Comment comment = commentRepository.save(CommentMapper.toComment(commentDto, author, item));
+        if (commentDto.getText() == null || commentDto.getText().trim().isEmpty()) {
+            throw new ValidationException("Текст комментария не может быть пустым");
+        }
+        Comment comment = commentRepository.save(CommentMapper.toCommentCreate(commentDto, item, author));
         return CommentMapper.toCommentDto(comment);
+
     }
 
     private void checkAuthor(long userId, long itemId) {
@@ -136,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private Item validationUpdate(long userId, long itemId, ItemDto itemDto) {
+    private Item validationUpdate(long userId, long itemId, ItemCreateRequestDto itemDto) {
         userRepository.checkUser(userId);
         Item item = itemRepository.checkItem(itemId);
         User owner = item.getOwner();

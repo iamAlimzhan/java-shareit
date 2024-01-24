@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoOwner;
 import ru.practicum.shareit.booking.dto.InputBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.position.BookingPosition;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.exceptions.IllegalStatusException;
@@ -93,29 +94,29 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findAllBookingsByUserId(long userId, String position) {
+    public List<BookingDto> findAllBookingsByUserId(long userId, BookingPosition position) {
         userRepository.checkUser(userId);
         List<Booking> bookings;
         switch (position) {
-            case "ALL":
+            case ALL:
                 bookings = bookingRepository.findAllByBookerId(userId, sortByStartDesc);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(),
                         LocalDateTime.now(), sortByStartDesc);
                 break;
-            case "PAST":
+            case PAST:
                 bookings = bookingRepository.findAllByBookerIdAndEndIsBefore(userId, LocalDateTime.now(),
                         sortByStartDesc);
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookings = bookingRepository.findAllByBookerIdAndStartIsAfter(userId, LocalDateTime.now(),
                         sortByStartDesc);
                 break;
-            case "WAITING":
+            case WAITING:
                 bookings = bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.WAITING, sortByStartDesc);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookings = bookingRepository.findAllByBookerIdAndStatus(userId, BookingStatus.REJECTED, sortByStartDesc);
                 break;
             default:
@@ -125,29 +126,29 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findAllBookingsByOwner(long userId, String position) {
+    public List<BookingDto> findAllBookingsByOwner(long userId, BookingPosition position) {
         userRepository.checkUser(userId);
         List<Booking> bookings;
         switch (position) {
-            case "ALL":
+            case ALL:
                 bookings = bookingRepository.findAllByItemOwnerId(userId, sortByStartDesc);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId,
                         LocalDateTime.now(), LocalDateTime.now(), sortByStartDesc);
                 break;
-            case "PAST":
+            case PAST:
                 bookings = bookingRepository.findAllByItemOwnerIdAndEndIsBefore(userId, LocalDateTime.now(),
                         sortByStartDesc);
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now(),
                         sortByStartDesc);
                 break;
-            case "WAITING":
+            case WAITING:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, BookingStatus.WAITING, sortByStartDesc);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStatus(userId, BookingStatus.REJECTED, sortByStartDesc);
                 break;
             default:

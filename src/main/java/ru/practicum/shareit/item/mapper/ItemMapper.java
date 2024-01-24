@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.mapper;
 
 import lombok.experimental.UtilityClass;
+import ru.practicum.shareit.item.dto.ItemCreateRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -44,6 +45,13 @@ public class ItemMapper {
                 .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .lastBooking(null)
                 .nextBooking(null)
+                .build();
+    }
+    public Item toItem(ItemCreateRequestDto createRequestDto) {
+        return Item.builder()
+                .name(createRequestDto.getName())
+                .description(createRequestDto.getDescription())
+                .available(createRequestDto.getAvailable())
                 .build();
     }
 }

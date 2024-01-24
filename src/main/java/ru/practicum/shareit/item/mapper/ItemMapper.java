@@ -47,6 +47,7 @@ public class ItemMapper {
                 .nextBooking(null)
                 .build();
     }
+
     public Item toItem(ItemCreateRequestDto createRequestDto) {
         return Item.builder()
                 .name(createRequestDto.getName())

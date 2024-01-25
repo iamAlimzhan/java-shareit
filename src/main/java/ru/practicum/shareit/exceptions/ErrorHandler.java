@@ -45,8 +45,8 @@ public class ErrorHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public RestException handleConflict(MethodArgumentTypeMismatchException ex) {
+    public ErrorResponse handleConflict(MethodArgumentTypeMismatchException ex) {
         log.debug("Обработка MethodArgumentTypeMismatchException со статусом 400 Bad Request: {}", ex.getMessage(), ex);
-        return new RestException(ex.getCause().getCause().getMessage());
+        return new ErrorResponse(ex.getCause().getCause().getMessage());
     }
 }

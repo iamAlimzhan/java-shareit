@@ -11,10 +11,11 @@ public enum BookingPosition {
     REJECTED;
 
     public static BookingPosition parse(String value) {
-        try {
-            return BookingPosition.valueOf(value);
-        } catch (Exception ex) {
-            throw new IllegalStatusException("Unknown state: " + value);
+        for (BookingPosition position : BookingPosition.values()) {
+            if ((position.name().equalsIgnoreCase(value))) {
+                return position;
+            }
         }
+        throw new IllegalStatusException("Unknown state: " + value);
     }
 }

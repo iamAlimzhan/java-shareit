@@ -6,6 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 
 @RestControllerAdvice
 @Slf4j
@@ -19,11 +21,12 @@ public class ErrorHandler {
 
     @ExceptionHandler({
             ValidationException.class,
-            MethodArgumentNotValidException.class})
+            MethodArgumentNotValidException.class,
+            IllegalStatusException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final Exception ex) {
-        log.debug("Обработка ValidationException со статусом 400 Bad Request: {}", ex.getMessage(), ex);
-        return new ErrorResponse(String.format("Ошибка с полем \"%s\"", ex.getMessage()));
+        log.debug("Обработка ValidationException и IllegalStatusException со статусом 400 Bad Request: {}", ex.getMessage(), ex);
+        return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler
@@ -38,5 +41,12 @@ public class ErrorHandler {
     public ErrorResponse handleThrowable(final Throwable ex) {
         log.error("Обработка Throwable со статусом 500 Internal Server Error: {}", ex.getMessage(), ex);
         return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConflict(MethodArgumentTypeMismatchException ex) {
+        log.debug("Обработка MethodArgumentTypeMismatchException со статусом 400 Bad Request: {}", ex.getMessage(), ex);
+        return new ErrorResponse(ex.getCause().getCause().getMessage());
     }
 }

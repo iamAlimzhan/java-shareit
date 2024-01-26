@@ -13,6 +13,6 @@ public interface UserService {
 
     List<UserDto> getAllUsers();
 
-    boolean deleteUser(long userId);
+    void deleteUser(long userId);
 
 }

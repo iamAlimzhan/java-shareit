@@ -19,4 +19,8 @@ public class CommentMapper {
         return new Comment(null, commentDto.getText(), item, author, LocalDateTime.now());
     }
 
+    public CommentCreateRequestDto toCommentCreateDto(Comment comment) {
+        return new CommentCreateRequestDto(comment.getText());
+    }
+
 }

@@ -14,9 +14,9 @@ public interface BookingService {
 
     BookingDto findById(long bookingId, long userId);
 
-    List<BookingDto> findAllBookingsByUserId(long userId, BookingPosition position);
+    List<BookingDto> findAllBookingsByUserId(long userId, BookingPosition position, int from, int size);
 
-    List<BookingDto> findAllBookingsByOwner(long userId, BookingPosition position);
+    List<BookingDto> findAllBookingsByOwner(long userId, BookingPosition position, int from, int size);
 
     BookingDtoOwner getNextBooking(long itemId);
 

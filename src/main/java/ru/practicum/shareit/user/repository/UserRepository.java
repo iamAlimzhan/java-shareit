@@ -6,7 +6,7 @@ import ru.practicum.shareit.user.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     default User checkUser(long userId) {
-        return findById(userId).orElseThrow(() -> new NotFoundException(String.format("Предмета с id = %s нет в базе",
+        return findById(userId).orElseThrow(() -> new NotFoundException(String.format("Пользователя с id = %s нет в базе",
                 userId)));
     }
 

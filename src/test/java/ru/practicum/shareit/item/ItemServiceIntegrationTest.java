@@ -14,7 +14,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
-import java.awt.print.Book;
 import java.time.LocalDateTime;
 import java.util.List;
 

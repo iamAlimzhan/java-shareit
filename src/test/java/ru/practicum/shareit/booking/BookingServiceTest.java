@@ -13,7 +13,6 @@ import ru.practicum.shareit.booking.position.BookingPosition;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.booking.status.BookingStatus;
-import ru.practicum.shareit.exceptions.IllegalStatusException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.model.Item;
@@ -22,7 +21,6 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -183,6 +181,7 @@ public class BookingServiceTest {
         assertEquals(bookingDto.get(0).getItem().getId(), booking.getItem().getId());
         verify(bookingRepository, times(1)).findAllByBookerIdAndStatus(anyLong(), any(), any());
     }
+
     @Test
     void findAllBookingsByItemOwnerId_StateAll() {
         BookingPosition position = BookingPosition.ALL;

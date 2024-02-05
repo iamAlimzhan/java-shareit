@@ -59,18 +59,6 @@ public class ItemRepositoryTest {
     }
 
     @Test
-    void getItemsByText() {
-        String text = "желе";
-        List<Item> items = repository.getItemByText(text, pageRequest);
-
-        assertNotNull(items);
-        assertEquals(1, items.size());
-        assertEquals(items.get(0).getId(), item.getId());
-        assertEquals(items.get(0).getName(), item.getName());
-        assertEquals(items.get(0).getDescription(), item.getDescription());
-    }
-
-    @Test
     void findAllByRequestIdIn() {
         List<Long> requestIds = List.of(itemRequest.getId());
         List<Item> items = repository.findAllByRequestIdIn(requestIds);

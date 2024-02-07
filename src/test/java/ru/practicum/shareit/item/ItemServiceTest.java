@@ -165,7 +165,7 @@ public class ItemServiceTest {
         verify(itemRepository, times(1)).save(any());
     }
 
-    /*@Test
+    @Test
     void updateItemWithEmptyName() {
         item.setName("");
         when(itemRepository.checkItem(itemId)).thenReturn(item);
@@ -173,7 +173,7 @@ public class ItemServiceTest {
 
         assertThrows(ValidationException.class,
                 () -> itemService.updateItem(owner.getId(), item.getId(), ItemMapper.toItemCreateDto(item)));
-    }*/
+    }
 
     @Test
     void updateItemWithEmptyDescription() {
@@ -193,34 +193,4 @@ public class ItemServiceTest {
         assertThrows(NotFoundException.class,
                 () -> itemService.updateItem(userId, item.getId(), ItemMapper.toItemCreateDto(item)));
     }
-
-   /* @Test
-    void addComment() {
-        when(commentRepository.save(any())).thenReturn(comment);
-        when(bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(anyLong(), anyLong(), any(), any()))
-                .thenReturn(booking);
-        when(itemRepository.checkItem(itemId)).thenReturn(item);
-        when(userRepository.checkUser(userId)).thenReturn(user);
-
-        CommentDto commentDto = itemService.addComment(userId, itemId, CommentMapper.toCommentCreateDto(comment));
-
-        assertNotNull(commentDto);
-        assertEquals(commentDto.getId(), comment.getId());
-        assertEquals(commentDto.getText(), comment.getText());
-        verify(commentRepository, times(1)).save(any());
-    }
-
-    @Test
-    void addCommentWithNotValidOwner() {
-        when(itemRepository.checkItem(itemId)).thenReturn(item);
-        when(userRepository.checkUser(userId)).thenReturn(user);
-        when(bookingRepository.findFirstByItemIdAndBookerIdAndEndIsBeforeAndStatus(anyLong(), anyLong(), any(), any()))
-                .thenReturn(null);
-
-        assertThrows(ValidationException.class, () -> itemService.addComment(userId, itemId,
-                CommentMapper.toCommentCreateDto(comment)));
-        verify(bookingRepository, times(1)).existsByItemIdAndBookerIdAndEndIsBeforeAndStatus(any(), any(), any(), any());
-    }*/
-
-
 }

@@ -171,4 +171,66 @@ public class ItemControllerTest {
     }
 
 
+    @Test
+    @SneakyThrows
+    void invalidAddItem() {
+        ItemCreateRequestDto invalidItemCreateRequestDto = new ItemCreateRequestDto(null, null,
+                true, null);
+
+        mvc.perform(post("/items")
+                        .header(HeaderConstants.X_SHARER_USER_ID, userId)
+                        .content(mapper.writeValueAsString(invalidItemCreateRequestDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @SneakyThrows
+    void invalidAddComment() {
+        long invalidItemId = -1L;
+        CommentCreateRequestDto invalidCommentCreateRequestDto = new CommentCreateRequestDto("");
+
+        mvc.perform(post("/items/{itemId}/comment", invalidItemId)
+                        .header(HeaderConstants.X_SHARER_USER_ID, userId)
+                        .content(mapper.writeValueAsString(invalidCommentCreateRequestDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @SneakyThrows
+    void invalidPaginationParams() {
+        int invalidFrom = -1;
+        int invalidSize = 0;
+
+        mvc.perform(get("/items")
+                        .header(HeaderConstants.X_SHARER_USER_ID, userId)
+                        .param("from", String.valueOf(invalidFrom))
+                        .param("size", String.valueOf(invalidSize))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @SneakyThrows
+    void invalidRequestData() {
+        ItemCreateRequestDto invalidItemCreateRequestDto = new ItemCreateRequestDto(null, null,
+                true, null);
+
+        mvc.perform(post("/items")
+                        .header(HeaderConstants.X_SHARER_USER_ID, userId)
+                        .content(mapper.writeValueAsString(invalidItemCreateRequestDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }

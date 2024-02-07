@@ -31,15 +31,15 @@ public class UserControllerTest {
 
     @Test
     void getAllUsers() throws Exception {
-        when(userService.getAllUsers()).thenReturn(Collections.singletonList(new UserDto(1L, "аты", "атыжоны@mail.rk")));
+        when(userService.getAllUsers()).thenReturn(Collections.singletonList(new UserDto(1L, "name", "name@mail.rk")));
 
         mockMvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("аты"))
-                .andExpect(jsonPath("$[0].email").value("атыжоны@mail.rk"));
+                .andExpect(jsonPath("$[0].name").value("name"))
+                .andExpect(jsonPath("$[0].email").value("name@mail.rk"));
 
         verify(userService, times(1)).getAllUsers();
     }
@@ -47,30 +47,30 @@ public class UserControllerTest {
     @Test
     void getUserById() throws Exception {
         long userId = 1L;
-        when(userService.getUserById(userId)).thenReturn(new UserDto(userId, "аты", "атыжоны@mail.rk"));
+        when(userService.getUserById(userId)).thenReturn(new UserDto(userId, "name", "name@mail.rk"));
 
         mockMvc.perform(get("/users/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
-                .andExpect(jsonPath("$.name").value("аты"))
-                .andExpect(jsonPath("$.email").value("атыжоны@mail.rk"));
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.email").value("name@mail.rk"));
 
         verify(userService, times(1)).getUserById(userId);
     }
 
     @Test
     void addUser() throws Exception {
-        UserDto userDto = new UserDto(null, "аты", "атыжоны@mail.rk");
-        when(userService.addUser(any(UserDto.class))).thenReturn(new UserDto(1L, "аты", "атыжоны@mail.rk"));
+        UserDto userDto = new UserDto(null, "name", "name@mail.rk");
+        when(userService.addUser(any(UserDto.class))).thenReturn(new UserDto(1L, "name", "name@mail.rk"));
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(userDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("аты"))
-                .andExpect(jsonPath("$.email").value("атыжоны@mail.rk"));
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.email").value("name@mail.rk"));
 
         verify(userService, times(1)).addUser(any(UserDto.class));
     }
@@ -78,7 +78,7 @@ public class UserControllerTest {
     @Test
     void updateUser() throws Exception {
         long userId = 1L;
-        UserDto userDto = new UserDto(userId, "аты", "атыжоны@mail.rk");
+        UserDto userDto = new UserDto(userId, "name", "name@mail.rk");
         when(userService.updateUser(eq(userId), any(UserDto.class))).thenReturn(userDto);
 
         mockMvc.perform(patch("/users/{id}", userId)
@@ -86,8 +86,8 @@ public class UserControllerTest {
                         .content(asJsonString(userDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
-                .andExpect(jsonPath("$.name").value("аты"))
-                .andExpect(jsonPath("$.email").value("атыжоны@mail.rk"));
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.email").value("name@mail.rk"));
 
         verify(userService, times(1)).updateUser(eq(userId), any(UserDto.class));
     }
@@ -100,6 +100,26 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).deleteUser(userId);
+    }
+
+    @Test
+    void addUserWithMissingName() throws Exception {
+        UserDto userDto = new UserDto(null, null, "аname@mail.rk");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(userDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addUserWithInvalidEmail() throws Exception {
+        UserDto userDto = new UserDto(null, "name", "invalid-email");
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(userDto)))
+                .andExpect(status().isBadRequest());
     }
 
     private static String asJsonString(final Object obj) {

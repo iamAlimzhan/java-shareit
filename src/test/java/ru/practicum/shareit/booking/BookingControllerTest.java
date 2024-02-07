@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.HeaderConstants;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -135,5 +136,62 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class))
                 .andExpect(jsonPath("$[0].booker.id", is(bookingDto.getBooker().getId()), Long.class));
+    }
+
+    @Test
+    void addBooking_WithInvalidRequestBody_ShouldReturnBadRequest() throws Exception {
+        InputBookingDto invalidBookingDto = new InputBookingDto(null, null, null);
+
+        mvc.perform(MockMvcRequestBuilders.post("/bookings")
+                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                        .content(mapper.writeValueAsString(invalidBookingDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateBooking_WithInvalidApprovedParameter_ShouldReturnBadRequest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.patch("/bookings/{bookingId}", 1)
+                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                        .param("approved", "invalidValue")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void invalidFromParameter() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/bookings")
+                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                        .param("state", "ALL")
+                        .param("from", "-1")
+                        .param("size", "10")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void invalidSizeParameter() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/bookings")
+                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                        .param("state", "ALL")
+                        .param("from", "0")
+                        .param("size", "0")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void invalidRequestBody() throws Exception {
+        String invalidJson = "{ \"field\": \"value\" }";
+
+        mvc.perform(MockMvcRequestBuilders.post("/bookings")
+                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                        .content(invalidJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

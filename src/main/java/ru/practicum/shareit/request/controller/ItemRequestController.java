@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.HeaderConstants;
+import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
@@ -39,7 +40,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto add(@RequestHeader(HeaderConstants.X_SHARER_USER_ID) long userId,
-                              @Valid @RequestBody ItemRequestDto itemRequestDto) {
+                              @Valid @RequestBody ItemRequestCreateDto itemRequestDto) {
         return itemRequestService.add(userId, itemRequestDto);
     }
 }

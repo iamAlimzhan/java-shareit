@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.HeaderConstants;
 import ru.practicum.shareit.request.controller.ItemRequestController;
+import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -19,6 +20,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -40,6 +43,7 @@ public class ItemRequestControllerTest {
     private final UserDto userDto = new UserDto(1L, "Имя", "имя.name@mail.rk");
 
     private final ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "описание", null, null);
+    private final ItemRequestCreateDto itemRequestCreateDto = new ItemRequestCreateDto("описание");
 
     @Test
     @SneakyThrows
@@ -87,7 +91,7 @@ public class ItemRequestControllerTest {
     @Test
     @SneakyThrows
     void add() {
-        when(itemRequestService.add(userDto.getId(), itemRequestDto))
+        when(itemRequestService.add(userDto.getId(), itemRequestCreateDto))
                 .thenReturn(itemRequestDto);
 
         mvc.perform(post("/requests")
@@ -101,4 +105,25 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(itemRequestDto.getDescription()), String.class));
     }
+
+
+    @Test
+    void getById_InvalidUserId_ReturnsBadRequest() throws Exception {
+        mvc.perform(get("/requests/{requestId}", itemRequestDto.getId())
+                        .header(HeaderConstants.X_SHARER_USER_ID, "not_a_number"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void add_InvalidRequestBody_ReturnsBadRequest() throws Exception {
+        when(itemRequestService.add(anyLong(), any(ItemRequestCreateDto.class))).thenReturn(itemRequestDto);
+
+        mvc.perform(post("/requests")
+                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                        .content("{\"invalid\":\"data\"}") // invalid request body
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }

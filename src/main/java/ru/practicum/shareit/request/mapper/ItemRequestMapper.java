@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.mapper;
 
 import lombok.experimental.UtilityClass;
+import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
@@ -17,5 +18,9 @@ public class ItemRequestMapper {
     public ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
         return new ItemRequestDto(itemRequest.getId(), itemRequest.getDescription(), itemRequest.getCreated(),
                 new ArrayList<>());
+    }
+
+    public ItemRequest toItemCreateRequest(ItemRequestCreateDto itemRequestDto, User requester) {
+        return new ItemRequest(null, itemRequestDto.getDescription(), requester, LocalDateTime.now());
     }
 }

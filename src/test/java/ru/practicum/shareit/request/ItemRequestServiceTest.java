@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -41,6 +42,7 @@ public class ItemRequestServiceTest {
     private final User requester = new User(1L, "имя", "имя.name@mail.rk");
     private final User owner = new User(1L, "имя2", "name.667@mail.rk");
     private final ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "описание", null, null);
+    private final ItemRequestCreateDto itemRequestCreateDto = new ItemRequestCreateDto("описание");
     private final ItemRequest itemRequest = new ItemRequest(1L, "описание", requester, null);
     private final Item item = new Item(1L, "ата аналардын", "бақыт", true, owner, itemRequest);
     private final Sort sort = Sort.by(Sort.Direction.DESC, "created");
@@ -55,7 +57,7 @@ public class ItemRequestServiceTest {
         when(itemRequestRepository.save(any())).thenReturn(itemRequest1);
         when(userRepository.checkUser(userId)).thenReturn(requester);
 
-        ItemRequestDto actualItemRequestDto = itemRequestService.add(1L, itemRequestDto);
+        ItemRequestDto actualItemRequestDto = itemRequestService.add(1L, itemRequestCreateDto);
 
         assertNotNull(actualItemRequestDto);
         assertEquals(itemRequestDto.getId(), actualItemRequestDto.getId());

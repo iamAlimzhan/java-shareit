@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemCreateRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.ArrayList;
 
@@ -19,21 +18,6 @@ public class ItemMapper {
                 .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .comments(new ArrayList<>())
                 .build();
-    }
-
-    public Item toItem(ItemDto itemDto) {
-        Item item = Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .build();
-        if (itemDto.getRequestId() != null) {
-            ItemRequest itemRequest = new ItemRequest();
-            itemRequest.setId(itemDto.getRequestId());
-            item.setRequest(itemRequest);
-        }
-        return item;
     }
 
     public ItemDto toItemDtoForOwner(Item item) {
@@ -53,6 +37,15 @@ public class ItemMapper {
                 .name(createRequestDto.getName())
                 .description(createRequestDto.getDescription())
                 .available(createRequestDto.getAvailable())
+                .build();
+    }
+
+    public static ItemCreateRequestDto toItemCreateDto(Item item) {
+        return ItemCreateRequestDto.builder()
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
     }
 }

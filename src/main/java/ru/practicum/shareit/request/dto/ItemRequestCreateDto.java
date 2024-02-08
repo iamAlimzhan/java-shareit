@@ -1,7 +1,6 @@
-package ru.practicum.shareit.comment.dto;
+package ru.practicum.shareit.request.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,11 +8,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class CommentCreateRequestDto {
+@NoArgsConstructor
+public class ItemRequestCreateDto {
     @NotBlank
-    @Size(max = 1024)
-    private String text;
+    @Size(max = 256)
+    private String description;
 }

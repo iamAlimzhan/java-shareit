@@ -18,6 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 public class ItemRequestRepositoryTest {
+    @Autowired
+    private TestEntityManager manager;
+    @Autowired
+    private ItemRequestRepository repository;
+
     private final User requester = new User(null, "имя", "имя.name@mail.rk");
     private final ItemRequest itemRequest = new ItemRequest(null, "описание", requester,
             LocalDateTime.now());
@@ -25,10 +30,6 @@ public class ItemRequestRepositoryTest {
     private final int from = 0;
     private final int size = 10;
     private final PageRequest pageRequest = PageRequest.of(from / size, size, sort);
-    @Autowired
-    private TestEntityManager manager;
-    @Autowired
-    private ItemRequestRepository repository;
 
     @Test
     void contextLoads() {

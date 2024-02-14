@@ -133,9 +133,8 @@ class BookingControllerTest {
     @Test
     void updateBooking_WithInvalidApprovedParameter_ShouldReturnBadRequest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.patch("/bookings/{bookingId}", 1)
-                        .header(HeaderConstants.X_SHARER_USER_ID, 1)
-                        .param("approved", "invalidValue")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .header(HeaderConstants.X_SHARER_USER_ID, 1)
+                .param("approved", "invalidValue")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
     }
 }

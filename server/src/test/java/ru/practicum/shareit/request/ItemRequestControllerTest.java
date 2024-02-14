@@ -29,15 +29,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ItemRequestController.class)
 public class ItemRequestControllerTest {
-    private final UserDto userDto = new UserDto(1L, "Имя", "имя.name@mail.rk");
-    private final ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "описание", null, null);
-    private final ItemRequestCreateDto itemRequestCreateDto = new ItemRequestCreateDto("описание");
     @Autowired
     ObjectMapper mapper;
+
     @MockBean
     ItemRequestService itemRequestService;
+
     @Autowired
     MockMvc mvc;
+
+    private final UserDto userDto = new UserDto(1L, "Имя", "имя.name@mail.rk");
+
+    private final ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "описание", null, null);
+    private final ItemRequestCreateDto itemRequestCreateDto = new ItemRequestCreateDto("описание");
 
     @Test
     @SneakyThrows

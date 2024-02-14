@@ -36,29 +36,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BookingController.class)
 class BookingControllerTest {
 
-    @Autowired
-    ObjectMapper mapper;
-
-    @MockBean
-    BookingService bookingService;
-
-    @Autowired
-    MockMvc mvc;
-
     private final int from = 0;
     private final int size = 10;
     private final BookingPosition position = BookingPosition.ALL;
-
     private final InputBookingDto bookingDtoFrontend = new InputBookingDto(null, LocalDateTime.now().plusHours(1),
             LocalDateTime.now().plusMinutes(20));
-
     private final UserDto userDto = new UserDto(1L, "name", "name.na@mail.com");
-
     private final ItemDto itemDto = new ItemDto(null, "name2", "desc", null,
             null, null, null, null);
-
     private final BookingDto bookingDto = new BookingDto(1L, userDto, itemDto, null, null, BookingStatus.APPROVED);
-
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    BookingService bookingService;
+    @Autowired
+    MockMvc mvc;
 
     @Test
     @SneakyThrows
@@ -137,6 +129,7 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$[0].id", is(bookingDto.getId()), Long.class))
                 .andExpect(jsonPath("$[0].booker.id", is(bookingDto.getBooker().getId()), Long.class));
     }
+
     @Test
     void updateBooking_WithInvalidApprovedParameter_ShouldReturnBadRequest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.patch("/bookings/{bookingId}", 1)

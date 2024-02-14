@@ -6,7 +6,6 @@ import lombok.Data;
 import ru.practicum.shareit.valid.Create;
 import ru.practicum.shareit.valid.Update;
 
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

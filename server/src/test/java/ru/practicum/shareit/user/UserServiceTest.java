@@ -20,13 +20,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
+    private final User user = new User(1L, "John", "john.doe@mail.com");
     @Mock
     UserRepository userRepository;
-
     @InjectMocks
     UserServiceImpl userService;
-
-    private final User user = new User(1L, "John", "john.doe@mail.com");
 
     @Test
     void getAllUsersTest() {

@@ -35,6 +35,18 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
+    private final User user = new User(null, "name", "name@mail.com");
+    private final User owner = new User(2L, "name2", "name2@mail.kz");
+    private final Item item = new Item(1L, "name3", "desc", true, owner,
+            new ItemRequest());
+    private final Booking booking = new Booking(1L, LocalDateTime.now().minusSeconds(120),
+            LocalDateTime.now().minusSeconds(60), item, owner, BookingStatus.APPROVED);
+    private final Comment comment = new Comment(1L, "text", item, user, LocalDateTime.now());
+    private final int from = 0;
+    private final int size = 10;
+    private final PageRequest pageRequest = PageRequest.of(from, size);
+    private final long userId = 1L;
+    private final long itemId = 1L;
     @Mock
     ItemRepository itemRepository;
     @Mock
@@ -49,19 +61,6 @@ public class ItemServiceTest {
     BookingService bookingService;
     @InjectMocks
     ItemServiceImpl itemService;
-
-    private final User user = new User(null, "name", "name@mail.com");
-    private final User owner = new User(2L, "name2", "name2@mail.kz");
-    private final Item item = new Item(1L, "name3", "desc", true, owner,
-            new ItemRequest());
-    private final Booking booking = new Booking(1L, LocalDateTime.now().minusSeconds(120),
-            LocalDateTime.now().minusSeconds(60), item, owner, BookingStatus.APPROVED);
-    private final Comment comment = new Comment(1L, "text", item, user, LocalDateTime.now());
-    private final int from = 0;
-    private final int size = 10;
-    private final PageRequest pageRequest = PageRequest.of(from, size);
-    private final long userId = 1L;
-    private final long itemId = 1L;
 
     @Test
     void getItemById() {

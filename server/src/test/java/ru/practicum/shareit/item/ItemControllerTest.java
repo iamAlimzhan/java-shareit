@@ -30,15 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ItemController.class)
 public class ItemControllerTest {
-    @Autowired
-    ObjectMapper mapper;
-
-    @MockBean
-    ItemService itemService;
-
-    @Autowired
-    MockMvc mvc;
-
     private final User owner = new User(1L, "name", "name@mail.com");
     private final ItemDto itemDto = new ItemDto(null, "name2", "desc", null,
             null, null, null, null);
@@ -49,6 +40,12 @@ public class ItemControllerTest {
     private final long itemId = 1L;
     private final int from = 0;
     private final int size = 10;
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    ItemService itemService;
+    @Autowired
+    MockMvc mvc;
 
     @Test
     @SneakyThrows

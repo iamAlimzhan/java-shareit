@@ -19,16 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DataJpaTest
 public class CommentRepositoryTest {
 
-    @Autowired
-    private TestEntityManager manager;
-
-    @Autowired
-    private CommentRepository repository;
-
     private final User owner = new User(null, "имя", "имя@mail.ru");
     private final User author = new User(null, "имя2", "имя2@mail.ru");
     private final Item item = new Item(null, "имя3", "описание", true, owner, null);
     private final Comment comment = new Comment(null, "очень нужно!!!", item, author, LocalDateTime.now());
+    @Autowired
+    private TestEntityManager manager;
+    @Autowired
+    private CommentRepository repository;
 
     @BeforeEach
     void setUp() {

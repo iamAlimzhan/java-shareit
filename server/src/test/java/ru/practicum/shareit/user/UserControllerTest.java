@@ -29,6 +29,14 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     void getAllUsers() throws Exception {
         when(userService.getAllUsers()).thenReturn(Collections.singletonList(new UserDto(1L, "name", "name@mail.rk")));
@@ -100,13 +108,5 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).deleteUser(userId);
-    }
-
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

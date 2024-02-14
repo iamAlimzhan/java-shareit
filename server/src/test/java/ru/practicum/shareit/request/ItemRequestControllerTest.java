@@ -20,8 +20,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,19 +29,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ItemRequestController.class)
 public class ItemRequestControllerTest {
-    @Autowired
-    ObjectMapper mapper;
-
-    @MockBean
-    ItemRequestService itemRequestService;
-
-    @Autowired
-    MockMvc mvc;
-
     private final UserDto userDto = new UserDto(1L, "Имя", "имя.name@mail.rk");
-
     private final ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "описание", null, null);
     private final ItemRequestCreateDto itemRequestCreateDto = new ItemRequestCreateDto("описание");
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    ItemRequestService itemRequestService;
+    @Autowired
+    MockMvc mvc;
 
     @Test
     @SneakyThrows

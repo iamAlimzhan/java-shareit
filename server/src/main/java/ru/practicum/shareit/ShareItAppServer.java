@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ShareItAppServer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ShareItAppServer.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ShareItAppServer.class, args);
+    }
 
 }

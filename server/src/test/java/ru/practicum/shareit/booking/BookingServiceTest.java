@@ -32,15 +32,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingServiceTest {
-    @Mock
-    BookingRepository bookingRepository;
-    @Mock
-    UserRepository userRepository;
-    @Mock
-    ItemRepository itemRepository;
-    @InjectMocks
-    BookingServiceImpl bookingService;
-
     private final User user = new User(null, "name", "name@mail.com");
     private final User owner = new User(2L, "name2", "name2@mail.kz");
     private final Item item = new Item(1L, "name3", "desc", true, owner,
@@ -53,6 +44,14 @@ public class BookingServiceTest {
     private final int size = 10;
     private final long itemId = 1L;
     private final long bookingId = 1L;
+    @Mock
+    BookingRepository bookingRepository;
+    @Mock
+    UserRepository userRepository;
+    @Mock
+    ItemRepository itemRepository;
+    @InjectMocks
+    BookingServiceImpl bookingService;
     long ownerId = owner.getId();
 
     @Test

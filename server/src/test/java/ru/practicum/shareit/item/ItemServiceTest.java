@@ -83,7 +83,7 @@ public class ItemServiceTest {
         long userId = 1L;
 
         when(userRepository.checkUser(anyLong())).thenReturn(new User());
-        when(itemRepository.findByOwnerId(anyLong(), any())).thenReturn(Collections.singletonList(new Item()));
+        when(itemRepository.getByOwnerIdOrderByIdAsc(anyLong(), any())).thenReturn(Collections.singletonList(new Item()));
         when(commentRepository.findAllByItemIn(any())).thenReturn(Collections.emptyList());
 
         when(bookingRepository.findAllByItemInAndStatus(any(), any())).thenReturn(Collections.emptyList());

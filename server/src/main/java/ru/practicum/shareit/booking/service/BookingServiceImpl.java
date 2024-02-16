@@ -145,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
                         pageRequest);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now(),
+                bookings = bookingRepository.findByItemOwnerIdAndStartGreaterThanOrderByStartDesc(userId, LocalDateTime.now(),
                         pageRequest);
                 break;
             case WAITING:

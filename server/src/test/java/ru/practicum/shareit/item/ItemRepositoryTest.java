@@ -48,7 +48,7 @@ public class ItemRepositoryTest {
 
     @Test
     void findAllByOwnerId() {
-        List<Item> items = repository.findByOwnerId(owner.getId(), pageRequest);
+        List<Item> items = repository.getByOwnerIdOrderByIdAsc(owner.getId(), pageRequest);
 
         assertNotNull(items);
         assertEquals(1, items.size());

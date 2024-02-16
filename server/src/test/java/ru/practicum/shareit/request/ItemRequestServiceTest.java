@@ -30,15 +30,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemRequestServiceTest {
-    @Mock
-    ItemRequestRepository itemRequestRepository;
-    @Mock
-    ItemRepository itemRepository;
-    @Mock
-    UserRepository userRepository;
-    @InjectMocks
-    ItemRequestServiceImpl itemRequestService;
-
     private final User requester = new User(1L, "имя", "имя.name@mail.rk");
     private final User owner = new User(1L, "имя2", "name.667@mail.rk");
     private final ItemRequestDto itemRequestDto = new ItemRequestDto(1L, "описание", null, null);
@@ -50,6 +41,14 @@ public class ItemRequestServiceTest {
     private final int size = 10;
     private final PageRequest pageRequest = PageRequest.of(from / size, size, sort);
     private final long userId = 1L;
+    @Mock
+    ItemRequestRepository itemRequestRepository;
+    @Mock
+    ItemRepository itemRepository;
+    @Mock
+    UserRepository userRepository;
+    @InjectMocks
+    ItemRequestServiceImpl itemRequestService;
 
     @Test
     void addTest() {

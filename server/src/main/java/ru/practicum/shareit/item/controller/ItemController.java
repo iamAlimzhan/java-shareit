@@ -22,8 +22,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemByUserId(@RequestHeader(HeaderConstants.X_SHARER_USER_ID) long userId,
-                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                         @RequestParam(defaultValue = "30") @Positive int size) {
+                                         @RequestParam int from,
+                                         @RequestParam int size) {
         return itemService.getItemsByUserId(userId, from, size);
     }
 

@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getItemsByUserId(long userId, int from, int size) {
         userRepository.checkUser(userId);
         PageRequest pageRequest = PageRequest.of(from, size);
-        List<Item> items = itemRepository.findByOwnerId(userId, pageRequest);
+        List<Item> items = itemRepository.getByOwnerIdOrderByIdAsc(userId, pageRequest);
 
         Map<Item, List<Comment>> commentsMap = commentRepository.findAllByItemIn(items)
                 .stream()
@@ -96,7 +96,6 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDto> itemsDto = items.stream()
                 .map(item -> {
                     ItemDto itemDto = ItemMapper.toItemDtoForOwner(item);
-
                     List<Booking> bookingByItem = bookingsMap.getOrDefault(item, Collections.emptyList());
                     itemDto.setLastBooking(bookingByItem.stream()
                             .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))

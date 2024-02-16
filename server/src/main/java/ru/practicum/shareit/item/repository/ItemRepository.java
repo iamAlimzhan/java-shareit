@@ -9,7 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByOwnerId(long userId, PageRequest pageRequest);
+    List<Item> getByOwnerIdOrderByIdAsc(long userId, PageRequest pageRequest);
 
     @Query(value = "select i from Item as i where (lower(i.name) like %?1% or lower(i.description) like %?1%) and " +
             "i.available=true")

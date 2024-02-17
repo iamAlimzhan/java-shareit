@@ -96,7 +96,7 @@ public class BookingServiceTest {
     @Test
     void findAllBookingsByUserIdWithStateCurrent() {
         BookingPosition position = BookingPosition.CURRENT;
-        when(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(anyLong(), any(), any(), any()))
+        when(bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(anyLong(), any(), any(), any()))
                 .thenReturn(List.of(booking));
         when(userRepository.checkUser(ownerId)).thenReturn(user);
 
@@ -107,7 +107,7 @@ public class BookingServiceTest {
         assertEquals(bookingDto.get(0).getId(), booking.getId());
         assertEquals(bookingDto.get(0).getBooker().getId(), booking.getBooker().getId());
         assertEquals(bookingDto.get(0).getItem().getId(), booking.getItem().getId());
-        verify(bookingRepository, times(1)).findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
+        verify(bookingRepository, times(1)).findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
                 anyLong(), any(), any(), any());
     }
 
@@ -236,7 +236,7 @@ public class BookingServiceTest {
     @Test
     void findAllBookingsByItemOwnerIdWithStateFuture() {
         BookingPosition position = BookingPosition.FUTURE;
-        when(bookingRepository.findByItemOwnerIdAndStartGreaterThanOrderByStartDesc(anyLong(), any(), any()))
+        when(bookingRepository.findAllByItemOwnerIdAndStartIsAfter(anyLong(), any(), any()))
                 .thenReturn(List.of(booking));
         when(userRepository.checkUser(ownerId)).thenReturn(user);
 
@@ -247,7 +247,7 @@ public class BookingServiceTest {
         assertEquals(bookingDto.get(0).getId(), booking.getId());
         assertEquals(bookingDto.get(0).getBooker().getId(), booking.getBooker().getId());
         assertEquals(bookingDto.get(0).getItem().getId(), booking.getItem().getId());
-        verify(bookingRepository, times(1)).findByItemOwnerIdAndStartGreaterThanOrderByStartDesc(anyLong(), any(),
+        verify(bookingRepository, times(1)).findAllByItemOwnerIdAndStartIsAfter(anyLong(), any(),
                 any());
     }
 

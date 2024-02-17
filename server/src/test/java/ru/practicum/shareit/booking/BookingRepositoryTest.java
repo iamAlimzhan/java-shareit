@@ -42,7 +42,7 @@ public class BookingRepositoryTest {
 
     @Test
     void findAllByBookerIdAndStartIsBeforeAndEndIsAfter_NoBookingsFound() {
-        List<Booking> bookings = repository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
+        List<Booking> bookings = repository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
                 -1L,
                 LocalDateTime.now().plusMinutes(60),
                 LocalDateTime.now().plusMinutes(120),

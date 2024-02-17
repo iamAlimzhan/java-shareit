@@ -104,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findAllByBookerId(userId, pageRequest);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfter(userId, LocalDateTime.now(),
+                bookings = bookingRepository.findAllByBookerIdAndStartIsBeforeAndEndIsAfterOrderByStartDesc(userId, LocalDateTime.now(),
                         LocalDateTime.now(), pageRequest);
                 break;
             case PAST:
@@ -145,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
                         pageRequest);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByItemOwnerIdAndStartGreaterThanOrderByStartDesc(userId, LocalDateTime.now(),
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now(),
                         pageRequest);
                 break;
             case WAITING:

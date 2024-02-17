@@ -4,21 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class InputBookingDto {
-    @NotNull
+    //@NotNull
     private Long itemId;
-    @NotNull
-    @FutureOrPresent
+    //@NotNull
+    //@FutureOrPresent
     private LocalDateTime start;
-    @NotNull
-    @Future
+    //@NotNull
+    //@Future
     private LocalDateTime end;
 }

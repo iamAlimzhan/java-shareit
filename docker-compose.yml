@@ -11,7 +11,6 @@ services:
       - db
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
-      - TZ=Asia/Almaty
 
   server:
     build: server/
@@ -25,7 +24,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - TZ=Asia/Almaty
 
   db:
     image: postgres:13.7-alpine
@@ -38,4 +36,3 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - TZ=Asia/Almaty

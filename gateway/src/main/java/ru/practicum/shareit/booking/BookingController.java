@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.header.HeaderConstants;
-import ru.practicum.shareit.validation.BookingValidation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

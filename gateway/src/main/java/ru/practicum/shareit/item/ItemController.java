@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.header.HeaderConstants;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.validation.ItemValidation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -20,7 +19,6 @@ import javax.validation.constraints.PositiveOrZero;
 @Validated
 public class ItemController {
     private final ItemClient itemClient;
-    private final ItemValidation itemValidation;
 
     @GetMapping
     public ResponseEntity<Object> getAllByUserId(
@@ -47,16 +45,14 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Object> addItem(@RequestHeader(HeaderConstants.X_SHARER_USER_ID) @Positive Long userId,
-                                          @Valid @RequestBody ItemDto itemDto) {
-        itemValidation.validationBeforeAdd(itemDto);
+                                          @Validated(ItemDto.Create.class) @RequestBody ItemDto itemDto) {
         return itemClient.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> patchItem(@RequestHeader(HeaderConstants.X_SHARER_USER_ID) @Positive Long userId,
-                                            @Valid @RequestBody ItemDto itemDto,
+                                            @Validated(ItemDto.Update.class) @RequestBody ItemDto itemDto,
                                             @PathVariable("itemId") Long itemId) {
-        itemValidation.validationBeforeUpdate(itemDto);
         return itemClient.patchItem(userId, itemId, itemDto);
     }
 

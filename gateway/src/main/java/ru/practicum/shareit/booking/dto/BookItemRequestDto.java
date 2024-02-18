@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookItemRequestDto {
+    @NotNull
     private Long itemId;
     @NotNull
     @FutureOrPresent

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Collections;
 
 @Controller
 @RequestMapping("/items")
@@ -40,7 +42,11 @@ public class ItemController {
             @RequestParam String text,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size) {
-        return itemClient.findItemsByText(userId, text, from, size);
+        if (StringUtils.isBlank(text)) {
+            return ResponseEntity.ok(Collections.emptyList());
+        } else {
+            return itemClient.findItemsByText(userId, text, from, size);
+        }
     }
 
     @PostMapping
